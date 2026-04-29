@@ -64,10 +64,6 @@
             transform: scale(1.05);
         }
 
-        .btn-secondary {
-            background: #555;
-        }
-
         .option-btn {
             display: block;
             width: 100%;
@@ -165,7 +161,6 @@
     <script>
         // Banco de dados de questões - Provas OBA Nível 1 (2018-2025)
         const questionBank = [
-
             // ==================== PROVA 2018 (21ª OBA) ====================
             {
                 q: "Qual planeta começa com a letra T?",
@@ -468,7 +463,7 @@
                 correct: 0
             },
 
-            // ==================== QUESTÕES EXTRAS (Astronáutica e Diversos) ====================
+            // ==================== QUESTÕES EXTRAS ====================
             {
                 q: "Qual foi a primeira mulher a viajar para o espaço?",
                 options: ["Sally Ride", "Valentina Tereshkova", "Mae Jemison", "Peggy Whitson", "Christina Koch"],
@@ -498,26 +493,6 @@
                 q: "Quantos astronautas no total caminharam na Lua?",
                 options: ["6", "8", "10", "12", "14"],
                 correct: 3
-            },
-            {
-                q: "Qual foi a primeira missão a pousar na Lua?",
-                options: ["Apollo 11", "Apollo 12", "Apollo 13", "Apollo 14", "Apollo 15"],
-                correct: 0
-            },
-            {
-                q: "Qual o nome do módulo lunar da Apollo 11?",
-                options: ["Columbia", "Eagle", "Odyssey", "Aquarius", "Challenger"],
-                correct: 1
-            },
-            {
-                q: "O que é um satélite artificial?",
-                options: ["Objeto feito pelo homem em órbita", "Lua natural", "Estrela cadente", "Cometa", "Asteroide"],
-                correct: 0
-            },
-            {
-                q: "Para que servem os satélites de previsão do tempo?",
-                options: ["Prever o clima", "Comunicação", "Navegação", "Espionagem", "TV"],
-                correct: 0
             }
         ];
 
@@ -528,20 +503,24 @@
 
         function startQuiz(num) {
             currentQuestions = [...questionBank].sort(() => 0.5 - Math.random()).slice(0, num);
-            resetState();
-        }
-
-        function retrySame() {
-            resetState();
-        }
-
-        function resetState() {
             currentIdx = 0;
             score = 0;
             userAnswers = [];
+            
             document.getElementById('screen-start').classList.add('hidden');
             document.getElementById('screen-results').classList.add('hidden');
             document.getElementById('screen-quiz').classList.remove('hidden');
+            document.getElementById('review-container').classList.add('hidden');
+            
+            showQuestion();
+        }
+
+        function retrySame() {
+            currentIdx = 0;
+            score = 0;
+            userAnswers = [];
+            document.getElementById('screen-quiz').classList.remove('hidden');
+            document.getElementById('screen-results').classList.add('hidden');
             document.getElementById('review-container').classList.add('hidden');
             showQuestion();
         }
@@ -622,7 +601,8 @@
             const container = document.getElementById('review-container');
             container.innerHTML = '<h3>📋 Revisão da Missão:</h3>';
             
-            currentQuestions.forEach((q, i) => {
+            for (let i = 0; i < currentQuestions.length; i++) {
+                const q = currentQuestions[i];
                 const item = document.createElement('div');
                 item.className = 'review-item';
                 const isCorrect = (userAnswers[i] === q.correct);
@@ -634,4 +614,16 @@
                 
                 item.innerHTML = `
                     <div class="review-q">${i+1}. ${q.q} <span style="color:${statusColor};">[${status}]</span></div>
-                    <div style="font-size: 0
+                    <div style="font-size: 0.9em; margin-top: 5px;">🔹 <strong>Sua resposta:</strong> ${userAnswerText}</div>
+                    <div style="color: #4caf50; font-size: 0.9em; font-weight: bold;">✅ <strong>Correta:</strong> ${correctAnswerText}</div>
+                `;
+                container.appendChild(item);
+            }
+            
+            container.classList.remove('hidden');
+        }
+    </script>
+
+</body>
+
+</html>
