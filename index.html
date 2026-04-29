@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,14 +23,14 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background-image: radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px);
+            background-image: radial-gradient(white, rgba(255, 255, 255, .2) 2px, transparent 40px);
             background-size: 550px 550px;
         }
 
         #app-container {
             background: rgba(20, 25, 45, 0.95);
             width: 90%;
-            max-width: 600px;
+            max-width: 700px;
             padding: 30px;
             border-radius: 20px;
             border: 2px solid var(--earth-blue);
@@ -37,8 +38,14 @@
             text-align: center;
         }
 
-        h1 { color: var(--star-gold); margin-top: 0; }
-        .hidden { display: none; }
+        h1 {
+            color: var(--star-gold);
+            margin-top: 0;
+        }
+
+        .hidden {
+            display: none;
+        }
 
         .btn {
             background: var(--earth-blue);
@@ -52,15 +59,21 @@
             transition: transform 0.2s, background 0.3s;
         }
 
-        .btn:hover { background: #1557b0; transform: scale(1.05); }
-        .btn-secondary { background: #555; }
+        .btn:hover {
+            background: #1557b0;
+            transform: scale(1.05);
+        }
+
+        .btn-secondary {
+            background: #555;
+        }
 
         .option-btn {
             display: block;
             width: 100%;
             padding: 12px;
             margin: 10px 0;
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
             border: 1px solid var(--earth-blue);
             color: white;
             border-radius: 8px;
@@ -68,329 +81,557 @@
             cursor: pointer;
         }
 
-        .option-btn:hover { background: rgba(26, 115, 232, 0.2); }
-        .correct { background: #2e7d32 !important; border-color: #4caf50; }
-        .wrong { background: #c62828 !important; border-color: #f44336; }
+        .option-btn:hover {
+            background: rgba(26, 115, 232, 0.2);
+        }
 
-        #feedback { font-weight: bold; margin: 15px 0; min-height: 24px; }
-        .progress-bar { height: 10px; background: #333; border-radius: 5px; margin-bottom: 20px; overflow: hidden; }
-        #progress-fill { height: 100%; background: var(--star-gold); width: 0%; transition: width 0.3s; }
-        
-        .review-item { text-align: left; border-bottom: 1px solid #444; padding: 10px 0; }
-        .review-q { color: var(--star-gold); font-weight: bold; }
+        .correct {
+            background: #2e7d32 !important;
+            border-color: #4caf50;
+        }
+
+        .wrong {
+            background: #c62828 !important;
+            border-color: #f44336;
+        }
+
+        #feedback {
+            font-weight: bold;
+            margin: 15px 0;
+            min-height: 24px;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: #333;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        #progress-fill {
+            height: 100%;
+            background: var(--star-gold);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .review-item {
+            text-align: left;
+            border-bottom: 1px solid #444;
+            padding: 10px 0;
+        }
+
+        .review-q {
+            color: var(--star-gold);
+            font-weight: bold;
+        }
     </style>
 </head>
+
 <body>
 
-<div id="app-container">
-    <!-- Tela Inicial -->
-    <div id="screen-start">
-        <h1>🚀 Missão OBA</h1>
-        <p>Prepare-se para viajar pelo universo! Você está pronto para o treinamento de astronauta?</p>
-        <button class="btn" onclick="startQuiz(5)">Começar Simulado (5 questões)</button>
+    <div id="app-container">
+        <!-- Tela Inicial -->
+        <div id="screen-start">
+            <h1>🚀 Missão OBA - Nível 1</h1>
+            <p>Prepare-se para viajar pelo universo! Treinamento para alunos do 1º ao 3º ano.<br><strong>Cada rodada possui 10 questões aleatórias.</strong></p>
+            <button class="btn" onclick="startQuiz(10)">Começar Simulado (10 questões)</button>
+        </div>
+
+        <!-- Tela de Questões -->
+        <div id="screen-quiz" class="hidden">
+            <div class="progress-bar">
+                <div id="progress-fill"></div>
+            </div>
+            <h3 id="question-text"></h3>
+            <div id="options-container"></div>
+            <div id="feedback"></div>
+            <button id="next-btn" class="btn hidden" onclick="nextQuestion()">Próxima Questão ➡️</button>
+        </div>
+
+        <!-- Tela de Resultados -->
+        <div id="screen-results" class="hidden">
+            <h1>🏆 Missão Concluída!</h1>
+            <p id="score-text"></p>
+            <div id="review-container" class="hidden"></div>
+
+            <button class="btn" onclick="showReview()">🔍 Rever Questões e Respostas</button>
+            <button class="btn" onclick="retrySame()">🔄 Refazer com as MESMAS questões</button>
+            <button class="btn" onclick="startQuiz(10)">✨ Novo Simulado (10 questões)</button>
+        </div>
     </div>
 
-    <!-- Tela de Questões -->
-    <div id="screen-quiz" class="hidden">
-        <div class="progress-bar"><div id="progress-fill"></div></div>
-        <h3 id="question-text"></h3>
-        <div id="options-container"></div>
-        <div id="feedback"></div>
-        <button id="next-btn" class="btn hidden" onclick="nextQuestion()">Próxima Questão ➡️</button>
-    </div>
+    <script>
+        // Banco de dados de questões - Provas OBA Nível 1 (2018-2025)
+        const questionBank = [
 
-    <!-- Tela de Resultados -->
-    <div id="screen-results" class="hidden">
-        <h1>🏆 Missão Concluída!</h1>
-        <p id="score-text"></p>
-        <div id="review-container" class="hidden"></div>
-        
-        <button class="btn" onclick="showReview()">🔍 Rever Questões e Respostas</button>
-        <button class="btn" onclick="retrySame()">🔄 Refazer com as MESMAS questões</button>
-        <button class="btn" onclick="startQuiz(5)">✨ Novo Simulado (Outras questões)</button>
-    </div>
-</div>
+            // ==================== PROVA 2018 (21ª OBA) ====================
+            {
+                q: "Qual planeta começa com a letra T?",
+                options: ["Terra", "Vênus", "Saturno", "Júpiter", "Netuno"],
+                correct: 0
+            },
+            {
+                q: "Sobre Marte: tem florestas? tem marcianos? tem oceanos? tem atmosfera?",
+                options: ["NÃO TEM - NÃO TEM - NÃO TEM - TEM", "TEM - TEM - NÃO TEM - NÃO TEM", "NÃO TEM - NÃO TEM - TEM - TEM", "TEM - NÃO TEM - NÃO TEM - TEM", "NÃO TEM - TEM - NÃO TEM - NÃO TEM"],
+                correct: 0
+            },
+            {
+                q: "Por que os astronautas pulam na Lua?",
+                options: ["Porque a Lua não tem atmosfera", "Porque a Lua não tem gravidade", "Porque o peso deles é menor na Lua", "Porque as botas tinham molas", "Porque estão felizes"],
+                correct: 2
+            },
+            {
+                q: "Assinale a alternativa correta sobre astros luminosos e iluminados:",
+                options: ["Vênus é LUMINOSO, Lua é LUMINOSA", "Cometa é LUMINOSO, Estrela é ILUMINADA", "Vênus é ILUMINADO, Lua é ILUMINADA", "Estrela é ILUMINADA, Cometa é LUMINOSO", "Todos são LUMINOSOS"],
+                correct: 2
+            },
+            {
+                q: "Qual afirmação está ERRADA?",
+                options: ["Vemos sempre a mesma face da Lua porque ela não gira em torno de si", "No Sistema Solar existem muitas estrelas", "As Três Marias são sempre visíveis durante a noite", "Sem nuvens a Lua é visível todas as noites", "A Lua cheia dura sete noites"],
+                correct: 4
+            },
+            {
+                q: "Qual é o planeta mais rápido ao redor do Sol?",
+                options: ["Mercúrio", "Vênus", "Terra", "Marte", "Júpiter"],
+                correct: 0
+            },
+            {
+                q: "Qual planeta tem o ano mais longo?",
+                options: ["Mercúrio", "Vênus", "Marte", "Saturno", "Netuno"],
+                correct: 4
+            },
+            {
+                q: "Complete: O mais veloz, sempre perto do Sol, ano de 88 dias, pouco maior que a Lua, muitas crateras e sem atmosfera.",
+                options: ["Mercúrio", "Vênus", "Marte", "Terra", "Plutão"],
+                correct: 0
+            },
+            {
+                q: "Qual foi o primeiro satélite artificial lançado em 1957?",
+                options: ["Apollo 11", "Sputnik 1", "Voyager 1", "Hubble", "ISS"],
+                correct: 1
+            },
+            {
+                q: "Qual é a nacionalidade do primeiro astronauta Yuri Gagarin?",
+                options: ["Norte-americana", "Russa", "Brasileira", "Chinesa", "Francesa"],
+                correct: 1
+            },
+            {
+                q: "Quem inventou o avião e quem foi o primeiro astronauta brasileiro?",
+                options: ["Santos Dumont e Yuri Gagarin", "Marcos Pontes e Prof. Canalle", "Santos Dumont e Marcos Pontes", "Santos Dumont e Pelé", "Marcos Pontes e Armstrong"],
+                correct: 2
+            },
+            {
+                q: "Qual a profissão de quem viaja num foguete?",
+                options: ["Poligonauta", "Argonauta", "Foguetonauta", "Astronauta", "Cosmonauta"],
+                correct: 3
+            },
 
-<script>
-    // Banco de dados de questões (Baseado nas provas 2010-2023 Nível 1)
-    const questionBank = [
+            // ==================== PROVA 2019 (22ª OBA) ====================
+            {
+                q: "Quais planetas terminam com a letra O?",
+                options: ["Mercúrio, Saturno, Urano, Netuno", "Terra e Marte", "Vênus e Júpiter", "Marte e Urano", "Netuno e Plutão"],
+                correct: 0
+            },
+            {
+                q: "Sobre a Lua: tem florestas? tem gravidade? tem oceanos?",
+                options: ["NÃO TEM - TEM - NÃO TEM", "TEM - NÃO TEM - NÃO TEM", "NÃO TEM - NÃO TEM - TEM", "TEM - TEM - NÃO TEM", "NÃO TEM - NÃO TEM - NÃO TEM"],
+                correct: 0
+            },
+            {
+                q: "O que ocorreu em 29/05/1919 em Sobral?",
+                options: ["Pouso na Lua", "Eclipse solar total", "Lançamento do Sputnik", "Chegada do homem a Marte", "Invenção do telescópio"],
+                correct: 1
+            },
+            {
+                q: "Assinale a alternativa correta sobre luminosidade:",
+                options: ["Sol é ILUMINADO, Urano é LUMINOSO", "Galáxia é LUMINOSA, Netuno é ILUMINADO", "Lua é LUMINOSA, Estrela é ILUMINADA", "Sol é LUMINOSO, Lua é LUMINOSA", "Todos são ILUMINADOS"],
+                correct: 1
+            },
+            {
+                q: "Qual afirmação está ERRADA?",
+                options: ["O lado oculto da Lua nunca é iluminado pelo Sol", "Existem bilhões de estrelas na galáxia", "Constelação são estrelas próximas entre si", "A Lua nunca é vista durante o dia", "A Lua só tem quatro fases"],
+                correct: 3
+            },
+            {
+                q: "Qual planeta é o mais quente, mais brilhante e tem volume quase igual ao da Terra?",
+                options: ["Mercúrio", "Vênus", "Marte", "Júpiter", "Saturno"],
+                correct: 1
+            },
+            {
+                q: "Quem foi o primeiro homem a pisar na Lua?",
+                options: ["Marcos Pontes", "Yuri Gagarin", "Neil Armstrong", "Buzz Aldrin", "Michael Collins"],
+                correct: 2
+            },
+            {
+                q: "Qual o nome do primeiro astronauta brasileiro?",
+                options: ["Santos Dumont", "Marcos Pontes", "João Canalle", "Neil Armstrong", "Yuri Gagarin"],
+                correct: 1
+            },
 
-    // ===== 2025 =====
-    {
-        q: "Assinale a afirmação que está toda errada sobre a Lua:",
-        options: [
-            "A Lua brilha porque tem luz própria, como o Sol",
-            "O Sol é a estrela mais próxima da Terra",
-            "Da Terra só vemos um lado da Lua",
-            "Astronautas visitaram a Lua, mas não moram nela",
-            "A Lua é o astro mais próximo da Terra"
-        ],
-        correct: 0
-    },
-    {
-        q: "Marque a afirmação errada sobre a Lua:",
-        options: [
-            "Na Lua tem crateras e montanhas",
-            "O céu da Lua é preto",
-            "Lua cheia nasce quando o Sol se põe",
-            "A Lua não tem mares de água",
-            "A Lua tem quase o mesmo tamanho do Sol"
-        ],
-        correct: 4
-    },
-    {
-        q: "Assinale a alternativa correta:",
-        options: [
-            "Todos os planetas têm luas",
-            "Todos giram em 365 dias",
-            "Todos têm atmosfera",
-            "Todos giram ao redor do Sol no mesmo sentido",
-            "Todos foram visitados por astronautas"
-        ],
-        correct: 3
-    },
+            // ==================== PROVA 2022 (25ª OBA) ====================
+            {
+                q: "Qual é o astro mais próximo da Terra?",
+                options: ["Lua", "Marte", "Sol", "Estrelas", "ISS"],
+                correct: 0
+            },
+            {
+                q: "Qual astro já foi visitado por astronautas?",
+                options: ["Lua", "Marte", "Mercúrio", "Plutão", "Vênus"],
+                correct: 0
+            },
+            {
+                q: "Qual planeta é vermelho e tem robôs explorando?",
+                options: ["Marte", "Vênus", "Mercúrio", "Júpiter", "Saturno"],
+                correct: 0
+            },
+            {
+                q: "Onde astronautas vivem atualmente?",
+                options: ["ISS", "Vênus", "Marte", "Saturno", "Lua"],
+                correct: 0
+            },
+            {
+                q: "Qual planeta é o mais quente e não tem luas?",
+                options: ["Vênus", "Mercúrio", "Marte", "Júpiter", "Saturno"],
+                correct: 0
+            },
+            {
+                q: "Qual planeta é o menor e mais próximo do Sol?",
+                options: ["Mercúrio", "Vênus", "Marte", "Júpiter", "Urano"],
+                correct: 0
+            },
+            {
+                q: "Qual a ordem correta dos planetas a partir do Sol?",
+                options: ["Mercúrio, Vênus, Terra, Marte, Júpiter, Saturno, Urano, Netuno", "Mercúrio, Terra, Vênus, Marte", "Vênus, Marte, Mercúrio, Terra", "Mercúrio, Vênus, Marte, Terra", "Terra, Marte, Júpiter, Saturno"],
+                correct: 0
+            },
+            {
+                q: "Qual destino é alcançado primeiro por um foguete?",
+                options: ["ISS", "Lua", "Marte", "Plutão", "Estrela"],
+                correct: 0
+            },
 
-    // ===== 2024 =====
-    {
-        q: "Marque a alternativa totalmente errada sobre a Terra:",
-        options: [
-            "A Terra gira ao redor do Sol",
-            "A atmosfera permite a vida",
-            "A Terra é plana e tem 4 luas",
-            "A Terra é esférica",
-            "A Lua é satélite da Terra"
-        ],
-        correct: 2
-    },
-    {
-        q: "Marque a alternativa errada sobre a Lua:",
-        options: [
-            "Não tem atmosfera",
-            "Tem florestas e astronautas moram lá",
-            "O céu não é azul",
-            "Tem crateras",
-            "É menor que a Terra"
-        ],
-        correct: 1
-    },
-    {
-        q: "Qual é a ordem correta dos planetas a partir do Sol?",
-        options: [
-            "Mercúrio, Vênus, Terra, Marte, Júpiter, Saturno, Urano, Netuno",
-            "Mercúrio, Terra, Vênus...",
-            "Vênus, Marte, Mercúrio...",
-            "Mercúrio, Vênus, Marte, Terra...",
-            "Ordem aleatória"
-        ],
-        correct: 0
-    },
+            // ==================== PROVA 2023 (26ª OBA) ====================
+            {
+                q: "Assinale a alternativa correta sobre a Lua:",
+                options: ["A Lua é satélite natural da Terra e já foi visitada por astronautas", "A Lua brilha mais que o Sol", "A Lua é satélite artificial", "Marte é vermelho e já foi visitado", "Lua e Marte foram visitados"],
+                correct: 0
+            },
+            {
+                q: "Quais astros têm crateras e montanhas?",
+                options: ["Lua, Marte e Mercúrio", "Apenas a Lua", "Apenas Marte", "Vênus e Terra", "Júpiter e Saturno"],
+                correct: 0
+            },
+            {
+                q: "Qual afirmação está correta sobre tamanhos?",
+                options: ["Terra > Mercúrio > Lua", "Lua > Terra > Mercúrio", "Mercúrio > Terra > Lua", "Terra > Lua > Mercúrio", "Marte > Terra > Lua"],
+                correct: 0
+            },
+            {
+                q: "Qual planeta é o mais quente, mais brilhante e pouco menor que a Terra?",
+                options: ["Vênus", "Mercúrio", "Marte", "Júpiter", "Saturno"],
+                correct: 0
+            },
+            {
+                q: "Qual planeta fica entre a Terra e o Sol, não tem lua, é o mais quente e mais brilhante?",
+                options: ["Vênus", "Mercúrio", "Marte", "Júpiter", "Urano"],
+                correct: 0
+            },
+            {
+                q: "Sobre a Terra, assinale a sequência correta (V/F): 1ª Tem rios e oceanos; 2ª Atmosfera protege a vida; 3ª Lua gira ao redor da Terra; 4ª Terra gira ao redor do Sol; 5ª Sol gira ao redor da Terra",
+                options: ["V-V-V-V-F", "V-V-F-V-F", "F-F-V-V-F", "V-V-F-F-V", "F-F-F-F-V"],
+                correct: 0
+            },
+            {
+                q: "Sobre Marte, assinale a sequência correta (V/F): 1ª Marte leva mais tempo que a Terra; 2ª Marte tem duas luas; 3ª Dia e ano de Marte são mais longos; 4ª Ano de Marte: 687 dias; 5ª Astronautas já caminharam em Marte",
+                options: ["V-V-V-V-F", "V-V-F-V-F", "F-F-V-V-F", "V-V-F-F-V", "F-F-F-F-V"],
+                correct: 0
+            },
+            {
+                q: "Sobre a base de lançamento, assinale a sequência correta (V/F): 1ª Inclinação de 45°; 2ª Gatilho libera o foguete; 3ª Contagem regressiva alerta; 4ª Contagem dá sorte; 5ª Contagem faz voar mais alto",
+                options: ["V-V-V-F-F", "V-V-F-F-F", "F-F-V-F-F", "V-F-F-F-V", "F-F-F-V-V"],
+                correct: 0
+            },
+            {
+                q: "Para que serve a bolinha de papel na base de lançamento?",
+                options: ["Apoio para o foguete, sem ela não vai longe, é empurrada pelo ar, não pode estar apertada", "Apenas para enfeite", "Para pesar o foguete", "Para tampar o cano", "Para fazer barulho"],
+                correct: 0
+            },
+            {
+                q: "Sobre utilidades dos foguetes, assinale a sequência correta (V/F): 1ª Levar à Lua/Marte; 2ª Levar à ISS; 3ª Colocar satélites; 4ª Colocar telescópios; 5ª Viajar entre cidades",
+                options: ["V-V-V-V-F", "V-V-F-V-F", "F-F-V-V-F", "V-V-F-F-V", "V-V-V-V-V"],
+                correct: 0
+            },
 
-    // ===== 2023 =====
-    {
-        q: "Assinale a alternativa correta:",
-        options: [
-            "A Lua é maior que o Sol",
-            "A Lua é satélite artificial",
-            "A Lua é satélite natural da Terra e foi visitada",
-            "Marte já foi visitado por astronautas",
-            "Lua e Marte foram visitados"
-        ],
-        correct: 2
-    },
-    {
-        q: "Qual alternativa está correta?",
-        options: [
-            "Mercúrio tem lua",
-            "Lua, Marte e Mercúrio têm oceanos",
-            "Todos têm luas",
-            "Lua, Marte e Mercúrio têm crateras",
-            "Mercúrio é maior que Marte"
-        ],
-        correct: 3
-    },
+            // ==================== PROVA 2024 (27ª OBA) ====================
+            {
+                q: "Marque a afirmação totalmente ERRADA sobre a Terra:",
+                options: ["A Terra gira ao redor do Sol", "A atmosfera permite a vida", "A Terra é plana e tem 4 luas", "A Terra é esférica", "A Lua é satélite da Terra"],
+                correct: 2
+            },
+            {
+                q: "Marque a afirmação totalmente ERRADA sobre a Lua:",
+                options: ["Na Lua não tem atmosfera", "A Lua tem mar, floresta e astronautas moram lá", "O céu da Lua não é azul", "A Lua tem crateras", "A Lua é menor que a Terra"],
+                correct: 1
+            },
+            {
+                q: "Assinale a alternativa correta sobre tamanhos:",
+                options: ["Terra > Mercúrio > Lua", "Mercúrio tem lua, Vênus tem duas", "Terra e Marte têm atmosferas, Lua e Mercúrio também", "Terra e Marte têm calotas polares, Lua também", "Lua e Mercúrio têm atmosferas"],
+                correct: 0
+            },
+            {
+                q: "Qual a ordem correta dos planetas a partir do Sol?",
+                options: ["Mercúrio, Vênus, Terra, Marte, Júpiter, Saturno, Urano, Netuno", "Mercúrio, Terra, Vênus, Marte", "Vênus, Marte, Mercúrio", "Mercúrio, Vênus, Marte, Terra", "Terra, Marte, Júpiter"],
+                correct: 0
+            },
+            {
+                q: "Qual planeta é avermelhado, tem duas luas, é rochoso e começa com M?",
+                options: ["Marte", "Mercúrio", "Vênus", "Júpiter", "Urano"],
+                correct: 0
+            },
+            {
+                q: "Sobre o Sol, assinale a sequência correta (V/F): 1ª Sol aquece a Terra; 2ª Sol ilumina a Terra; 3ª Sol faz evaporar água; 4ª Terra leva 365 dias; 5ª Lua e Sol giram ao redor da Terra",
+                options: ["V-V-V-V-F", "F-F-F-F-V", "F-F-V-V-F", "V-V-F-F-V", "V-V-F-V-F"],
+                correct: 0
+            },
+            {
+                q: "Sobre velocidades dos planetas, assinale a sequência correta (V/F): 1ª Terra não gira; 2ª Ano de Mercúrio é menor; 3ª Plutão é mais lento; 4ª Mercúrio é o mais rápido; 5ª Marte leva mais tempo que a Terra",
+                options: ["F-V-V-V-V", "F-V-F-V-F", "F-V-F-F-F", "V-F-V-V-V", "V-F-F-F-F"],
+                correct: 0
+            },
+            {
+                q: "Sobre lançamento de foguetes, assinale a sequência correta (V/F): 1ª 45 graus; 2ª Gatilho rápido; 3ª Contra o vento; 4ª Base presa; 5ª Gatilho devagar",
+                options: ["V-V-F-V-F", "F-F-V-F-V", "F-F-F-V-F", "V-V-V-V-F", "V-V-F-F-F"],
+                correct: 0
+            },
+            {
+                q: "Sobre a base com ar comprimido, assinale a sequência correta (V/F): 1ª Voa por ar comprimido; 2ª Bomba de bicicleta; 3ª Mais ar = mais longe; 4ª Base não precisa ficar presa; 5ª Mão coloca bolinha",
+                options: ["V-V-V-F-V", "F-F-F-V-F", "F-F-V-F-V", "V-V-F-V-F", "V-V-F-F-V"],
+                correct: 0
+            },
+            {
+                q: "Sobre características dos foguetes, assinale a sequência correta (V/F): 1ª Mais caros que carros; 2ª Não fazem barulho; 3ª Sem foguetes não chegamos ao espaço; 4ª Sem foguetes não vamos a planetas; 5ª Mais caros que aviões",
+                options: ["V-F-V-V-V", "V-F-F-V-V", "F-V-V-V-V", "V-F-V-V-F", "F-V-F-F-F"],
+                correct: 0
+            },
 
-    // ===== 2022 =====
-    {
-        q: "Qual é o astro mais próximo da Terra?",
-        options: [
-            "Lua",
-            "Marte",
-            "Sol",
-            "Estrelas",
-            "ISS"
-        ],
-        correct: 0
-    },
-    {
-        q: "Qual astro já foi visitado por astronautas?",
-        options: [
-            "Lua",
-            "Marte",
-            "Mercúrio",
-            "Plutão",
-            "ISS"
-        ],
-        correct: 0
-    },
-    {
-        q: "Qual planeta é vermelho e tem robôs explorando?",
-        options: [
-            "Marte",
-            "Vênus",
-            "Mercúrio",
-            "Júpiter",
-            "Saturno"
-        ],
-        correct: 0
-    },
-    {
-        q: "Onde astronautas vivem atualmente?",
-        options: [
-            "ISS",
-            "Vênus",
-            "Marte",
-            "Saturno",
-            "Lua"
-        ],
-        correct: 0
-    },
-    {
-        q: "Qual planeta é o mais quente e não tem luas?",
-        options: [
-            "Vênus",
-            "Mercúrio",
-            "Marte",
-            "Júpiter",
-            "Saturno"
-        ],
-        correct: 0
-    },
-    {
-        q: "Qual planeta é o menor e mais próximo do Sol?",
-        options: [
-            "Mercúrio",
-            "Vênus",
-            "Marte",
-            "Júpiter",
-            "Urano"
-        ],
-        correct: 0
-    },
+            // ==================== PROVA 2025 (28ª OBA) ====================
+            {
+                q: "Assinale a afirmação que está toda errada sobre a Lua:",
+                options: ["A Lua brilha porque tem luz própria, como o Sol", "O Sol é a estrela mais próxima da Terra", "Da Terra só vemos um lado da Lua", "Astronautas visitaram a Lua, mas não moram nela", "A Lua é o astro mais próximo da Terra"],
+                correct: 0
+            },
+            {
+                q: "Marque a afirmação que está toda errada sobre a Lua:",
+                options: ["Na Lua tem crateras e montanhas", "O céu da Lua é preto", "Lua Cheia nasce quando o Sol se põe", "A Lua não tem mares de água", "A Lua tem quase o mesmo tamanho do Sol"],
+                correct: 4
+            },
+            {
+                q: "Assinale a alternativa correta sobre os planetas:",
+                options: ["Todos os planetas têm luas", "Todos giram em 365 dias", "Todos têm atmosfera", "Todos giram ao redor do Sol no mesmo sentido", "Todos foram visitados por astronautas"],
+                correct: 3
+            },
+            {
+                q: "Qual alternativa tem planetas com o mesmo número de vogais?",
+                options: ["Júpiter, Saturno, Urano, Netuno, Plutão", "Mercúrio, Vênus, Saturno", "Júpiter, Vênus, Saturno", "Marte, Saturno, Júpiter", "Vênus, Terra, Marte"],
+                correct: 0
+            },
+            {
+                q: "Assinale a única alternativa onde está tudo errado:",
+                options: ["O astronauta brasileiro Marcos Pontes também esteve na Lua", "Quando não vemos a Lua é fase Nova", "A Terra tem quatro estações", "Na Lua os astronautas pesam menos", "A Lua tem quatro fases"],
+                correct: 0
+            },
+            {
+                q: "Sobre o Sistema Solar, assinale a sequência correta (V/F): 1ª Luz do Sol chega em todos; 2ª Todos giram no mesmo sentido; 3ª Quatro maiores são gasosos; 4ª Quanto mais perto, menor o ano; 5ª Lado oculto da Lua nunca é iluminado",
+                options: ["V-V-V-V-F", "F-F-F-F-V", "F-F-V-V-F", "V-V-F-F-V", "V-V-F-V-F"],
+                correct: 0
+            },
+            {
+                q: "Sobre astronomia, assinale a sequência correta (V/F): 1ª Sol gira ao redor da Terra; 2ª Distância Terra-Sol = Unidade Astronômica; 3ª Santos Dumont não foi astronauta; 4ª Marcos Pontes esteve na ISS; 5ª Na Lua Nova o lado oculto está iluminado",
+                options: ["F-V-V-V-V", "F-V-F-V-V", "F-V-F-F-F", "V-F-V-V-V", "V-F-F-F-F"],
+                correct: 0
+            },
+            {
+                q: "Sobre foguetes, assinale a sequência correta (V/F): 1ª Foguete é veículo de transporte; 2ª Foguetes não precisam de asas; 3ª São mais rápidos já construídos; 4ª Maior peso é combustível; 5ª Levaram 12 pessoas a Marte",
+                options: ["V-V-V-V-F", "V-F-V-V-V", "F-F-V-F-V", "V-V-F-V-F", "V-V-V-F-F"],
+                correct: 0
+            },
+            {
+                q: "Sobre foguetes, assinale a sequência correta (V/F): 1ª Levam satélites; 2ª Levam telescópios; 3ª Lançam gases para trás; 4ª Usam gasolina; 5ª Não precisam de asas",
+                options: ["V-V-V-F-V", "F-F-V-F-V", "F-F-F-V-F", "V-V-F-V-F", "V-V-F-F-V"],
+                correct: 0
+            },
+            {
+                q: "Sobre características dos foguetes, assinale a sequência correta: 1ª Poucos países constroem; 2ª Nunca explodiram; 3ª Levaram 12 homens à Lua até 1972; 4ª Só foguetes levam a Marte; 5ª Mais caros que aviões",
+                options: ["V-F-F-V-V", "V-F-V-V-V", "F-V-V-V-V", "V-F-V-V-F", "F-V-F-F-F"],
+                correct: 0
+            },
 
-    // ===== QUESTÃO DE DISTÂNCIA (legal pro jogo) =====
-    {
-        q: "Qual destino é alcançado primeiro por um foguete saindo da Terra?",
-        options: [
-            "ISS",
-            "Lua",
-            "Marte",
-            "Plutão",
-            "Estrela"
-        ],
-        correct: 0
-    }
-];
+            // ==================== QUESTÕES EXTRAS (Astronáutica e Diversos) ====================
+            {
+                q: "Qual foi a primeira mulher a viajar para o espaço?",
+                options: ["Sally Ride", "Valentina Tereshkova", "Mae Jemison", "Peggy Whitson", "Christina Koch"],
+                correct: 1
+            },
+            {
+                q: "Qual a altura aproximada da órbita da ISS?",
+                options: ["100 km", "400 km", "1000 km", "5000 km", "36000 km"],
+                correct: 1
+            },
+            {
+                q: "Qual princípio físico explica o funcionamento de um foguete?",
+                options: ["Lei da Inércia", "Ação e Reação", "Lei da Gravitação", "Efeito Estufa", "Pressão Atmosférica"],
+                correct: 1
+            },
+            {
+                q: "Qual a função das empenas (aletas) no foguete?",
+                options: ["Dar estabilidade ao voo", "Aumentar a velocidade", "Armazenar combustível", "Proteger a carga útil", "Fazer barulho"],
+                correct: 0
+            },
+            {
+                q: "Quantas missões Apollo pousaram na Lua?",
+                options: ["3", "4", "5", "6", "7"],
+                correct: 3
+            },
+            {
+                q: "Quantos astronautas no total caminharam na Lua?",
+                options: ["6", "8", "10", "12", "14"],
+                correct: 3
+            },
+            {
+                q: "Qual foi a primeira missão a pousar na Lua?",
+                options: ["Apollo 11", "Apollo 12", "Apollo 13", "Apollo 14", "Apollo 15"],
+                correct: 0
+            },
+            {
+                q: "Qual o nome do módulo lunar da Apollo 11?",
+                options: ["Columbia", "Eagle", "Odyssey", "Aquarius", "Challenger"],
+                correct: 1
+            },
+            {
+                q: "O que é um satélite artificial?",
+                options: ["Objeto feito pelo homem em órbita", "Lua natural", "Estrela cadente", "Cometa", "Asteroide"],
+                correct: 0
+            },
+            {
+                q: "Para que servem os satélites de previsão do tempo?",
+                options: ["Prever o clima", "Comunicação", "Navegação", "Espionagem", "TV"],
+                correct: 0
+            }
+        ];
 
-    let currentQuestions = [];
-    let currentIdx = 0;
-    let score = 0;
-    let userAnswers = [];
+        let currentQuestions = [];
+        let currentIdx = 0;
+        let score = 0;
+        let userAnswers = [];
 
-    function startQuiz(num) {
-        // Seleciona questões aleatórias
-        currentQuestions = [...questionBank].sort(() => 0.5 - Math.random()).slice(0, num);
-        resetState();
-    }
-
-    function retrySame() {
-        resetState();
-    }
-
-    function resetState() {
-        currentIdx = 0;
-        score = 0;
-        userAnswers = [];
-        document.getElementById('screen-start').classList.add('hidden');
-        document.getElementById('screen-results').classList.add('hidden');
-        document.getElementById('screen-quiz').classList.remove('hidden');
-        document.getElementById('review-container').classList.add('hidden');
-        showQuestion();
-    }
-
-    function showQuestion() {
-        const qData = currentQuestions[currentIdx];
-        document.getElementById('question-text').innerText = qData.q;
-        const container = document.getElementById('options-container');
-        container.innerHTML = '';
-        document.getElementById('feedback').innerText = '';
-        document.getElementById('next-btn').classList.add('hidden');
-        
-        // Atualiza barra de progresso
-        document.getElementById('progress-fill').style.width = `${(currentIdx / currentQuestions.length) * 100}%`;
-
-        qData.options.forEach((opt, index) => {
-            const btn = document.createElement('button');
-            btn.className = 'option-btn';
-            btn.innerText = opt;
-            btn.onclick = () => checkAnswer(index, btn);
-            container.appendChild(btn);
-        });
-    }
-
-    function checkAnswer(choice, btn) {
-        if (document.getElementById('next-btn').className.indexOf('hidden') === -1) return;
-        
-        const correct = currentQuestions[currentIdx].correct;
-        userAnswers.push(choice);
-        
-        const allBtns = document.querySelectorAll('.option-btn');
-        allBtns.forEach(b => b.style.cursor = 'default');
-
-        if (choice === correct) {
-            btn.classList.add('correct');
-            document.getElementById('feedback').innerHTML = "🌟 Parabéns! Você acertou!";
-            score++;
-        } else {
-            btn.classList.add('wrong');
-            allBtns[correct].classList.add('correct');
-            document.getElementById('feedback').innerHTML = "🚀 Quase! O conhecimento é uma jornada!";
+        function startQuiz(num) {
+            currentQuestions = [...questionBank].sort(() => 0.5 - Math.random()).slice(0, num);
+            resetState();
         }
-        
-        document.getElementById('next-btn').classList.remove('hidden');
-    }
 
-    function nextQuestion() {
-        currentIdx++;
-        if (currentIdx < currentQuestions.length) {
+        function retrySame() {
+            resetState();
+        }
+
+        function resetState() {
+            currentIdx = 0;
+            score = 0;
+            userAnswers = [];
+            document.getElementById('screen-start').classList.add('hidden');
+            document.getElementById('screen-results').classList.add('hidden');
+            document.getElementById('screen-quiz').classList.remove('hidden');
+            document.getElementById('review-container').classList.add('hidden');
             showQuestion();
-        } else {
-            showResults();
         }
-    }
 
-    function showResults() {
-        document.getElementById('screen-quiz').classList.add('hidden');
-        document.getElementById('screen-results').classList.remove('hidden');
-        document.getElementById('score-text').innerText = `Você completou a missão com ${score} de ${currentQuestions.length} pontos!`;
-    }
+        function showQuestion() {
+            const qData = currentQuestions[currentIdx];
+            document.getElementById('question-text').innerHTML = `<span style="color:#ffd700;">${currentIdx + 1}.</span> ${qData.q}`;
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            document.getElementById('feedback').innerHTML = '';
+            document.getElementById('next-btn').classList.add('hidden');
 
-    function showReview() {
-        const container = document.getElementById('review-container');
-        container.innerHTML = '<h3>Revisão da Missão:</h3>';
-        currentQuestions.forEach((q, i) => {
-            const item = document.createElement('div');
-            item.className = 'review-item';
-            const status = (userAnswers[i] === q.correct) ? "✅" : "❌";
-            item.innerHTML = `
-                <div class="review-q">${i+1}. ${q.q} ${status}</div>
-                <div>Sua resposta: ${q.options[userAnswers[i]]}</div>
-                <div style="color: #4caf50">Correta: ${q.options[q.correct]}</div>
+            const progressPercent = (currentIdx / currentQuestions.length) * 100;
+            document.getElementById('progress-fill').style.width = `${progressPercent}%`;
+
+            qData.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = `${String.fromCharCode(65+index)} - ${opt}`;
+                btn.onclick = () => checkAnswer(index, btn);
+                container.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(choice, btn) {
+            if (!document.getElementById('next-btn').classList.contains('hidden')) return;
+
+            const correctIndex = currentQuestions[currentIdx].correct;
+            userAnswers.push(choice);
+            const allBtns = document.querySelectorAll('.option-btn');
+
+            if (choice === correctIndex) {
+                btn.classList.add('correct');
+                document.getElementById('feedback').innerHTML = "🌟 Parabéns, astronauta! Resposta correta!";
+                score++;
+            } else {
+                btn.classList.add('wrong');
+                allBtns[correctIndex].classList.add('correct');
+                document.getElementById('feedback').innerHTML = "🚀 Quase lá! O conhecimento é uma jornada. Veja a resposta correta em verde.";
+            }
+
+            allBtns.forEach(b => {
+                b.style.pointerEvents = 'none';
+                b.style.cursor = 'default';
+            });
+
+            document.getElementById('next-btn').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentIdx++;
+            if (currentIdx < currentQuestions.length) {
+                showQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('screen-quiz').classList.add('hidden');
+            document.getElementById('screen-results').classList.remove('hidden');
+            
+            const perc = (score / currentQuestions.length) * 100;
+            let msg = perc >= 70 ? "🚀 Você está pronto para a OBA! Parabéns, futuro astrônomo!" : "📚 Continue estudando! Você vai melhorar na próxima missão.";
+            let stars = perc >= 90 ? "🌟🌟🌟🌟🌟" : perc >= 70 ? "🌟🌟🌟🌟" : perc >= 50 ? "🌟🌟🌟" : perc >= 25 ? "🌟🌟" : "🌟";
+            
+            document.getElementById('score-text').innerHTML = `
+                <h3>Pontuação: ${score} / ${currentQuestions.length}</h3>
+                <p>${msg}</p>
+                <p style="font-size: 1.8rem;">${stars}</p>
             `;
-            container.appendChild(item);
-        });
-        container.classList.remove('hidden');
-    }
-</script>
+            
+            document.getElementById('review-container').innerHTML = '';
+            document.getElementById('review-container').classList.add('hidden');
+        }
 
-</body>
-</html>
+        function showReview() {
+            const container = document.getElementById('review-container');
+            container.innerHTML = '<h3>📋 Revisão da Missão:</h3>';
+            
+            currentQuestions.forEach((q, i) => {
+                const item = document.createElement('div');
+                item.className = 'review-item';
+                const isCorrect = (userAnswers[i] === q.correct);
+                const status = isCorrect ? "✅ ACERTOU" : "❌ ERROU";
+                const statusColor = isCorrect ? "#4caf50" : "#f44336";
+                
+                const userAnswerText = userAnswers[i] !== undefined ? q.options[userAnswers[i]] : "Não respondida";
+                const correctAnswerText = q.options[q.correct];
+                
+                item.innerHTML = `
+                    <div class="review-q">${i+1}. ${q.q} <span style="color:${statusColor};">[${status}]</span></div>
+                    <div style="font-size: 0
